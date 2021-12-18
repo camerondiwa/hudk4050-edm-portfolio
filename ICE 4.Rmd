@@ -1,0 +1,100 @@
+---
+title: "ICE 4"
+author: "Cameron Diwa"
+date: "10/14/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(GGally)
+library(party)
+library(e1071)
+library(caret)
+
+mooc <- read_csv("ICE4_Data.csv")
+```
+
+
+```{r initial descriptives}
+table(mooc$certified)
+summary(mooc)
+ggpairs(mooc, columns = 2:4, ggplot2::aes(colour=certified))
+```
+
+
+```{r building the logistic model}
+moocD <- mooc %>% 
+  mutate(certified_yes = as_factor(certified)) %>% # creates a dummy variable for "certified"
+  select(certified_yes, forum.posts, grade, assignment)
+
+logitModel <- glm(certified_yes ~ forum.posts + grade + assignment, 
+                  data = moocD, 
+                  family = "binomial")
+summary(logitModel)
+```
+
+
+```{r decision tree}
+moocTree <- ctree(
+  certified_yes ~ forum.posts + grade + assignment,
+  data = moocD)
+
+print(moocTree)
+plot(moocTree) # visual representation of decision tree
+```
+
+
+```{r naive bayes}
+moocNB <- naiveBayes(
+  certified_yes ~ forum.posts + grade + assignment,
+  data = moocD)
+
+certified_pred_NB <- predict(moocNB, moocD[, 2:4])
+
+performance = moocD$certified_yes == certified_pred_NB # compares labels in dummy "certified" and naive bayes "certified_pred"
+cat('The accuracy is', (sum(performance)/length(performance))*100, '%')
+```
+
+
+```{r model evaluation}
+# step 1. split the data
+set.seed(123)
+sample_size <- floor(0.8*nrow(moocD))
+picked <- sample(seq_len(nrow(moocD)),
+                 size = sample_size)
+training_moocD <- moocD[picked,]
+testing_moocD <- moocD[-picked,]
+
+# step 2. re-train the model with the training data
+moocLogit <- glm(certified_yes ~ forum.posts + grade + assignment, 
+                 data = training_moocD, 
+                 family = "binomial")
+moocTree <- ctree(certified_yes ~ forum.posts + grade + assignment, 
+                  data = training_moocD)
+
+# step 3. feed the Xs in the testing dataset and obtain the predicted Ys
+probabilities <- predict(moocLogit, testing_moocD[,2:4], type = "response")
+certified_pred_logit <- ifelse(probabilities > 0.5, "yes", "no")
+
+certified_pred_tree <- predict(moocTree, testing_moocD[, 2:4]) # predicted value in decision tree model
+certified_pred_NB <- predict(moocNB, training_moocD[, 2:4])
+
+# step 4. compare the predicted Ys with what is actually in the testing dataset and obtain the confusion matrix
+logitCM <- table(testing_moocD$certified_yes, certified_pred_logit)
+treeCM <- table(testing_moocD$certified_yes, certified_pred_tree) # decision tree confusion matrix
+naivebayesCM <- table(training_moocD$certified_yes, certified_pred_NB)
+
+# step 5. obtain accuracy score
+logitAccuracy <- confusionMatrix(logitCM)$overall["Accuracy"]
+cat('The accuracy for the logistic regression model is', logitAccuracy*100, '%')
+
+treeAccuracy <- confusionMatrix(treeCM)$overall["Accuracy"]
+cat('The accuracy for the decision tree model is', treeAccuracy*100, '%')
+
+naivebayesAccuracy <- confusionMatrix(naivebayesCM)$overall["Accuracy"]
+cat('The accuracy for the naive bayes model is', naivebayesAccuracy*100, '%')
+```
+

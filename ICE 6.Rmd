@@ -1,0 +1,57 @@
+---
+title: "ICE 6"
+author: "Cameron Diwa"
+date: "10/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+
+ICEdata <- read_csv("ICE6_Data.csv")
+```
+
+
+```{r}
+set.seed(123)
+
+# a list of 200 values of x with means of 1 and sd of 1.5
+X <- rnorm(200, mean = 1, sd = 1.5)
+# a list of 200 residuals with sd of 0.5
+res <- rnorm(200, mean = 0, sd = 0.5)
+y <- 1 + (2 * X) + res
+
+twoDData <- tibble(X = X, y = y)
+plot(twoDData)
+
+pca <- prcomp(twoDData, scale. = TRUE)
+summary(pca)
+pca$rotation # rotation of the axes
+```
+
+
+```{r pca for dimension reduction}
+pc1 <- pca$x[, 1]
+rotation1 <- pca$rotation[, 1]
+
+plot(scale(twoDData), col = "blue") # scales the original data
+points(pc1 %*% t(rotation1), col = "orange") # %*% multiplies matrices together, t() is a transpose function
+```
+
+
+```{r pca in intelligent tutoring system}
+ICEdata_noid <- ICEdata %>% select(-id)
+icepca <- prcomp(ICEdata_noid, scale. = FALSE) # data is unscaled
+summary(icepca)
+
+icepca2c <- icepca$x[, 1:2] # reduces the data to two dimensions, since there are two components explaining more variance than the others
+plot(icepca2c)
+
+cl <- kmeans(icepca2c, centers = 3) # groups the data into 3 clusters
+plot(icepca2c, col = cl$cluster)
+
+biplot(icepca, cex = 0.7)
+```
+

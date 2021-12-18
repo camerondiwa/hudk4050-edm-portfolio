@@ -1,0 +1,49 @@
+---
+title: "ICE 3"
+author: "Cameron Diwa"
+date: "10/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+school <- read_csv("ICE1_Data.csv")
+
+library(psych)
+
+```
+
+
+```{r linear regression}
+graduationCollege <- school %>% 
+  select(`graduation 2010-11`, `college enroll 2010-11`)
+
+plot(graduationCollege)
+
+model <- lm(`college enroll 2010-11` ~ `graduation 2010-11`, data = graduationCollege)
+summary(model)
+
+abline(a = coef(model)[1], b = coef(model)[2], col = "red")
+```
+
+```{r multiple independent variables}
+videoData = read_csv("ICE3_data.csv")
+summary(videoData)
+
+videoDataRegression <- videoData %>% 
+  select(participation, watch.time, confusion.points, key.points)
+plot(videoDataRegression)
+
+pairs.panels(videoDataRegression,
+             hist.col = "#6cace4", 
+             ellipses = FALSE
+             )
+
+videoModel <- lm(watch.time ~ participation + confusion.points + key.points, data = videoDataRegression)
+summary(videoModel)
+
+summary(model)
+
+```
+

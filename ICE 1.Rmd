@@ -1,0 +1,40 @@
+---
+title: "ICE 1"
+author: "Cameron Diwa"
+date: "09/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(beepr)
+library(tidyverse)
+
+# Load the data set.
+ICEdata <- read_csv("ICE1_Data.csv")
+
+```
+
+```{r data wrangling}
+
+summary(ICEdata)
+
+ICEdata_factor <- ICEdata %>%
+  mutate_if(sapply(ICEdata, is.character), as.factor)
+summary(ICEdata_factor)
+
+studentProgressGraduation <- ICEdata_factor %>% 
+  select(`Progress_Rpt_10-11`, `graduation 2010-11`)
+
+graduation201011 <- ICEdata$`graduation 2010-11`
+mean(graduation201011)
+median(graduation201011)
+length(graduation201011)
+
+plot(studentProgressGraduation)
+
+hist(graduation201011)
+
+```
+

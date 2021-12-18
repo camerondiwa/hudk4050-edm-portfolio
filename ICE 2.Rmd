@@ -1,0 +1,94 @@
+---
+title: "ICE 2"
+author: "Cameron Diwa"
+date: "09/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(nycflights13)
+
+ICEdata <- read_csv("ICE1_Data.csv")
+```
+
+
+```{r indexing with numbers and names}
+s <- c(0, 5, 9, 9, 2, 4, 0, 2)
+print(s)
+
+print(s[4:6])
+
+df <- read.table(header = T, text = '
+        school years degree
+             1     4      A
+             2     0      N       
+             3     0      N
+             4     2      B
+             5     0      N
+             6     0      N
+             7     0      C
+             8     2      M
+             9     5      D
+      ')
+print(df)
+
+print(df[c(1, 4, 7, 8, 9), ])
+df$degree
+```
+
+
+```{r index with booleans}
+df[df$degree != 'N', ] # prints all rows in df that does not have degree N
+```
+
+
+```{r negative indexing}
+print(df[c(-1, -4, -7:-9), ]) # drops all specified indices
+```
+
+
+```{r indexing with tidyverse}
+new_ICE <- select(ICEdata, `DBN`, `Quality_Review_Score`, `Progress_Rpt_10-11`) # pulls all rows for the specified columns
+new_ICE
+
+collegeGraduation <- mutate(ICEdata, collegeGraduationRate = `college enroll 2010-11` / `graduation 2010-11`) # adds a column to the new_ICE dataset called "collegeGraduationRate" and creates a new dataset called "collegeGraduation"
+collegeGraduation
+
+filter(ICEdata, `graduation 2010-11` > 0.8 & `Quality_Review_Score` == "Proficient") # prints the rows that satisfy the specified filters
+
+ICEdata %>% 
+  select(`Quality_Review_Score`, `Student_Progress_10-11`, `graduation 2010-11`) %>% 
+  filter(`graduation 2010-11` > 0.8 & `Quality_Review_Score` == "Proficient") # same output as the above line
+```
+
+
+```{r combine datasets}
+c(0, s) # adds a 0 to the beginning of dataset s
+
+view(flights)
+view(weather)
+
+flights <- flights %>% select(carrier, flight,
+                              origin, dest, time_hour)
+weather <- weather %>% select(temp, wind_speed, precip, origin, time_hour)
+mergeCols <- c("origin", "time_hour") # joins the flights and weather datasets at the common columns "origin" and "time_hour"
+
+left_dplyr  <- left_join(flights,  weather, by = mergeCols)
+right_dplyr <- right_join(flights, weather, by = mergeCols)
+inner_dplyr <- inner_join(flights, weather, by = mergeCols)
+full_dplyr  <- full_join(flights,  weather, by = mergeCols)
+
+g <- ICEdata %>% 
+  filter(`Quality_Review_Score` == "Proficient") %>% 
+  summarize(average = mean(`graduation 2010-11`, na.rm = TRUE),
+            standardDeviation = sd(`graduation 2010-11`, na.rm = TRUE)) # calculates the average and standard deviation for `graduation 2010-11` in ICEdata
+print(g)
+
+ICEdata %>%
+  group_by(Quality_Review_Score) %>% 
+  summarize(GraduationAverage = mean(`graduation 2010-11`, na.rm = TRUE),
+            CollegeEnrollAverage = mean(`college enroll 2010-11`, na.rm = TRUE)) # agreggates the dataset by "Quality_Review_Score" (which has 6 different levels), and calculates the specified averages for each level
+```
+

@@ -1,0 +1,51 @@
+---
+title: "ICE 8"
+author: "Cameron Diwa"
+date: "11/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(igraph)
+library(tidyverse)
+
+setwd("/Users/camerondiwa")
+SNAdata <- read.csv("ICE8_Data.csv", row.names = 1)
+
+g <- graph_from_adjacency_matrix(as.matrix(SNAdata), weighted = TRUE, mode = "undirected") # imports the SNA data in matrix format
+plot(g) # the graph is weighted and undirected
+
+```
+
+```{r}
+d <- edge_density(g) # density measures how complete the graph is (how many edges are present in the network compared to the total possible number of edges)
+
+degree(g) # the degree function counts the number of edges for each node; the more edges a node has, the more important/central it is to the network (degree centrality)
+
+betweenness(g, normalized = TRUE) # measures how quickly a node can travel to the rest of the graph (closeness centrality)
+
+betweenness(g, directed = FALSE, normalized = TRUE) # detects the amount of influence a node has over the flow of information in a graph (betweenness centrality)
+
+fc <- cluster_fast_greedy(g) # detects communities within the network
+membership(fc) # shows who is in which community
+sizes(fc) # shows how many communities were identified with the cluster_fast_greedy() function
+
+V(g)$color <- fc$membership # manipulates the vertex properties of the graph object g, and then assigns colors to each vertex based on the membership
+plot(g)
+
+V(g)$degree <- degree(g) # adjusts node sizes based on degree centrality
+plot(g, vertex.size = V(g)$degree*2) # multiplying by 2 allows for a more apparent size differentiation
+
+plot(g,
+     vertex.size = V(g)$degree*2, # same as above
+     edge.width = 5^(E(g)$weight)/5) # computes the width of edges
+
+set.seed(123) # makes the network layout consistent
+plot(g,
+     vertex.size = V(g)$degree*2,
+     edge.width = 5^(E(g)$weight)/5,
+     layout = layout.fruchterman.reingold) # one example of a layout
+```
+

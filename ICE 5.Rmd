@@ -1,0 +1,67 @@
+---
+title: "ICE 5"
+author: "Cameron Diwa"
+date: "10/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(cluster)
+library(factoextra)
+
+motivation <- read_csv("ICE5_Data.csv")
+```
+
+
+```{r example 2D dataset clustering}
+twoDData <- rbind(matrix(rnorm(100, mean = 0, sd = 0.3), ncol = 2),
+           matrix(rnorm(100, mean = 2, sd = 0.2), ncol = 2),
+           matrix(rnorm(100, mean = 4, sd = 0.5), ncol = 2),
+           matrix(rnorm(100, mean = 6, sd = 0.2), ncol = 2)) # creates a 2D dataset
+
+colnames(twoDData) <- c("x", "y") # labels the column names "x" and "y"
+plot(twoDData)
+
+cl <- kmeans(twoDData, centers = 4) # assigns the data points into 4 different clusters
+plot(twoDData, col = cl$cluster)
+```
+
+
+```{r continued example doing silhouette coefficient and silhouette plot}
+dis = dist(twoDData)^2
+sil = silhouette(cl$cluster, dis)
+plot(sil, col = cl$cluster)
+
+fviz_silhouette(sil) # visually enhances the plot
+```
+
+
+```{r clustering self-reported motivation data}
+motivationClean <- motivation %>% 
+  na.omit() %>% # omits any empty data points (NA)
+  select(-id) # selects every column except "id"
+motivationClean
+
+motivation2CL <- kmeans(motivationClean, centers = 2) # 2-cluster model
+dis2CL = dist(motivationClean)^2
+sil2CL = silhouette(motivation2CL$cluster, dis2CL)
+fviz_silhouette(sil2CL)
+
+motivation3CL <- kmeans(motivationClean, centers = 3) # 3-cluster model
+dis3CL = dist(motivationClean)^2
+sil3CL = silhouette(motivation3CL$cluster, dis3CL)
+fviz_silhouette(sil3CL)
+
+motivation4CL <- kmeans(motivationClean, centers = 4) # 4-cluster model
+dis4CL = dist(motivationClean)^2
+sil4CL = silhouette(motivation4CL$cluster, dis4CL)
+fviz_silhouette(sil4CL)
+
+motivationClean %>% mutate(cluster = motivation3CL$cluster) # the motivation dataset that only contains the 3-cluster model
+
+fviz_nbclust(motivationClean, kmeans, method = "wss") # determines the number of clusters
+```
+

@@ -1,0 +1,40 @@
+---
+title: "ICE 7"
+author: "Cameron Diwa"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(factoextra)
+library(tidyverse)
+library(NbClust)
+
+scorecard.dictionary <- read_csv("CollegeScorecardDataDictionary-09-12-2015 (ACA3).csv")
+scorecard <- read_csv("CollegeScorecard (ACA3).csv")
+```
+
+```{r model from ACA3}
+scorecard.filtered <- scorecard %>%
+  mutate(State = STABBR) %>%
+  select(INSTNM, State, CONTROL, ADM_RATE, C150_4) %>%
+  filter(CONTROL == 1 | CONTROL == 2) %>%
+  na.omit()
+
+scorecard.quant <- scorecard.filtered %>%
+  select(CONTROL, ADM_RATE, C150_4)
+```
+
+```{r data preparation}
+scorecard.standardized <- scale(scorecard.quant) # standardizes the data to make the variables comparable
+
+# elbow method
+fviz_nbclust(scorecard.standardized, kmeans, method = "wss")
+
+# function that chooses the optimal number of clusters by majority rule
+NbClust(data = scorecard.standardized, diss = NULL, distance = "euclidean",
+        min.nc = 2, max.nc = 15, method = "kmeans")
+```
+
