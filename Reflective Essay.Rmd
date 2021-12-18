@@ -1,0 +1,16 @@
+---
+title: "Reflective Essay"
+author: "Cameron Diwa"
+date: "12/21/2021"
+output: html_document
+---
+
+When I began my program at Teachers College in the summer of 2020, I came in with an interest in data science and how it can be used to solve educational issues I was passionate about. I was fortunate enough to take an introductory quantitative social science course at the Columbia Graduate School of Arts and Science last spring. I enjoyed this class immensely, so I wanted to continue studying data science, leading me to enroll in HUDK 4050. 
+
+I came into the course with elementary-level coding skills, so I was eager to develop them further, especially since I anticipated I would be able to do so in applying the skills to my specific interests in higher education. I aspire to pursue a PhD that integrates higher education and data science, so I thought that HUDK 4050 would be an ideal opportunity to get my feet wet in what I want to do in the future.
+
+I was right. All the concepts and techniques learned in the class have been very enlightening to me. I feel like we covered many different areas of data mining this semester that it was a bit overwhelming to me. Nonetheless, the topics made me even more excited to dive deeper into learning more sophisticated techniques like data wrangling, clustering, social network analysis, and data visualization. I thought that I learned the most from the Analysis Challenge Assignments, though they were rather difficult for me overall. Being online for the majority of this class, and also not being part of the Human Development department, it was hard for me to connect with my peers. As a result, I completed all ACAs on my own. Unfortunately, I did not feel like I maximized my learning experiences in these assignments because I did not work on them with anyone. However, I am walking away from the course with valuable basic knowledge of data mining skills that I will certainly develop further in my future academic endeavors.
+
+Given the fast pace of the semester, I accomplished my learning objective in exposing myself to data science tools. Although a number of the topics were difficult for me to understand, this course did not deter me from wanting to make a career in data science. If anything, it reinforced my aspirations to become a better future data scientist. Next semester, I am planning on taking courses in educational data management, data visualization, and natural language processing. I am a little nervous about taking three data science classes together, as I am not the most confident in my coding abilities, and I will be finishing writing my master's thesis. However, I am more excited about the prospect of learning everything I can about data science before delving into my PhD next fall (assuming I am admitted to a PhD program).
+
+Overall, I am very satisfied with the education I am receiving at Teachers College. Even though Teachers College and Columbia make it extremely difficult to enroll in courses outside of my own school and department here, I am finding ways to engage in my interdisciplinary interests in sociology, higher education, and data science. I have one semester left in my program, and I can proudly say that I accomplished everything I wanted to do here.
